@@ -1,25 +1,27 @@
 import P5 from 'p5'
-import 'p5/lib/addons/p5.sound'
 import 'p5/lib/addons/p5.dom'
-import  '../externalLib/p5.speech.js'
 import Story from 'storyGenerator.js'
 import Letter from 'Letter.js'
+import voce from './voice'
 
 const s = function (p) {
   var timeNow
   var updateTime
   var deltaTime
-  var voceNarrante = new P5.Speech('Google UK English Male')
   var introText = ""
-  voceNarrante.onEnd = speechEnded
+
+  function onSpeechEnded() {
+    introText = "Press the mouse button for create a new story"
+    lettere = fromStringToChar(introText, lettere)
+  }
+  const voice = voce(onSpeechEnded)
+
   var lettere = []
   const bodyWidth = window.innerWidth
   const bodyHeight = window.innerHeight
   p.setup = function () {
     p.createCanvas(bodyWidth, bodyHeight)
     timeNow = p.millis()
-    voceNarrante.setRate(0.7)
-    voceNarrante.setPitch(0.9)
     p.background(70)
     p.textSize(15)
     p.textFont("Helvetica")
@@ -42,18 +44,13 @@ const s = function (p) {
     fromJsonToStory(introText)
   }
 
-  // controll whenl the voice has end to speak
-  function speechEnded() {
-    introText = "Press the mouse button for create a new story"
-    lettere = fromStringToChar(introText, lettere)
-  }
   // read the JSON file and feed tracery with data
   function fromJsonToStory(genStory) {
     p.loadJSON('mytest.json', function (jsonInput) {
       var story = new Story(jsonInput.main.animal, jsonInput.main.umor)
       genStory = story.createStory()
       lettere = fromStringToChar(genStory, lettere)
-      voceNarrante.speak(genStory)
+      voice.speak(genStory)
     })
   }
 // Transform one string to signle char for make the text animation
