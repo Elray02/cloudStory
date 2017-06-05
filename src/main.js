@@ -4,23 +4,31 @@ import Story from 'storyGenerator.js'
 import Letter from 'Letter.js'
 import voce from './voice'
 
+function buildLetters(p, textToIterate) {
+  let spacingLetter = 10
+  const newLettere = []
+  for (let i = 0; i < textToIterate.length; i++) {
+    spacingLetter += 13
+    newLettere[i] = new Letter(p, spacingLetter, window.innerHeight / 2, textToIterate.charAt(i))
+  }
+  return newLettere
+}
+
 const s = function (p) {
   var timeNow
   var updateTime
   var deltaTime
   var introText = ""
+  var lettere = []
 
   function onSpeechEnded() {
     introText = "Press the mouse button for create a new story"
-    lettere = fromStringToChar(introText, lettere)
+    lettere = buildLetters(p, introText)
   }
   const voice = voce(onSpeechEnded)
 
-  var lettere = []
-  const bodyWidth = window.innerWidth
-  const bodyHeight = window.innerHeight
   p.setup = function () {
-    p.createCanvas(bodyWidth, bodyHeight)
+    p.createCanvas(window.innerWidth, window.innerHeight)
     timeNow = p.millis()
     p.background(70)
     p.textSize(15)
@@ -34,34 +42,22 @@ const s = function (p) {
     if (deltaTime > 3000) {
       timeNow = p.millis()
     }
-    // display the text with animation
-    lettere.forEach(function (value, index) {
-      lettere[index].display()
-      lettere[index].animate()
-    })
-  }
-  p.mousePressed = function () {
-    fromJsonToStory(introText)
+    lettere.forEach(value => value.render())
   }
 
-  // read the JSON file and feed tracery with data
-  function fromJsonToStory(genStory) {
-    p.loadJSON('mytest.json', function (jsonInput) {
-      var story = new Story(jsonInput.main.animal, jsonInput.main.umor)
-      genStory = story.createStory()
-      lettere = fromStringToChar(genStory, lettere)
-      voice.speak(genStory)
-    })
+  function newStory(jsonInput) {
+    var storyFactory = new Story(jsonInput.main.animal, jsonInput.main.umor)
+    const story = storyFactory.createStory()
+    lettere = buildLetters(p, story)
+    voice.speak(story)
   }
-// Transform one string to signle char for make the text animation
-  function fromStringToChar(textToIterate, charContainer) {
-    charContainer = []
-    var spacingLetter = 10
-    for (var i = 0; i < textToIterate.length; i++) {
-      spacingLetter += 13
-      charContainer[i] = new Letter(p, spacingLetter, bodyHeight / 2, textToIterate.charAt(i))
-    }
-    return charContainer
+
+  function loadStory(genStory) {
+    p.loadJSON('mytest.json', newStory)
+  }
+
+  p.mousePressed = function () {
+    loadStory(introText)
   }
 }
 

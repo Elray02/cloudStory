@@ -39,6 +39,11 @@ class Letter {
     this.y = this.p5.lerp(this.y, this.homey, 0.05)
     this.theta = this.p5.lerp(this.theta, 0, 0.05)
   }
+
+  render() {
+    this.display()
+    this.animate()
+  }
 }
 
 export default Letter
