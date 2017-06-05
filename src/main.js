@@ -41,13 +41,12 @@ const s = function (p) {
   p.setup = function () {
     p.createCanvas(window.innerWidth, window.innerHeight)
     timeNow = p.millis()
-    p.background(70)
     p.textSize(15)
     p.textFont("Helvetica")
   }
 
   p.draw = function () {
-    p.background(70)
+    p.background(170)
     updateTime = p.millis()
     deltaTime = updateTime - timeNow
     if (deltaTime > 3000) {
