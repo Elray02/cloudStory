@@ -6,20 +6,21 @@ import voce from './voice'
 
 const startX = 10
 const startY = window.innerHeight / 2
-const letterWidth = 13
-const letterHeight = 15
+const fontSize = 15
 
-function buildLetters(p, text) {
+function buildLetters(p, font, text) {
   let x = startX
   let y = startY
+  const delta = font.textBounds('l', x, y, fontSize).h * 2
   // string to array: https://stackoverflow.com/a/38066567/433685
   const newLettere = Array.from(text).map((char, i) => {
+    const bounds = font.textBounds(char, x, y, fontSize)
     if (x > window.innerWidth - startX) {
       x = startX
-      y += letterHeight
+      y += delta
     }
     const l = new Letter(p, x, y, char)
-    x += letterWidth
+    x += Math.ceil(bounds.w) + 2
     return l
   })
   return newLettere
@@ -31,18 +32,22 @@ const s = function (p) {
   var deltaTime
   var introText = ""
   var lettere = []
+  var font = null
 
   function onSpeechEnded() {
     introText = "Press the mouse button for create a new story"
-    lettere = buildLetters(p, introText)
+    lettere = buildLetters(p, font, introText)
   }
   const voice = voce(onSpeechEnded)
 
   p.setup = function () {
     p.createCanvas(window.innerWidth, window.innerHeight)
-    timeNow = p.millis()
+
+    font = p.loadFont('assets/Cormorant-Regular.otf')
+    p.textFont(font)
     p.textSize(15)
-    p.textFont("Helvetica")
+
+    timeNow = p.millis()
   }
 
   p.draw = function () {
@@ -59,8 +64,8 @@ const s = function (p) {
     var storyFactory = new Story(jsonInput.main.animal, jsonInput.main.umor)
     const story = storyFactory.createStory()
     console.log(story)
-    lettere = buildLetters(p, story)
-    voice.speak(story)
+    lettere = buildLetters(p, font, story)
+    // voice.speak(story)
   }
 
   function loadStory(genStory) {
