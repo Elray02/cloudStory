@@ -39,15 +39,13 @@ const s = function (p) {
     })
   }
   p.mousePressed = function () {
-    voceNarrante.speak(introText)
     fromJsonToStory(introText)
   }
 
   // controll whenl the voice has end to speak
   function speechEnded() {
-    introText = "Schiacchia un pulsante per generare una storia"
-    fromStringToChar(introText, lettere)
-    console.log("finito")
+    introText = "Press the mouse button for create a new story"
+    lettere = fromStringToChar(introText, lettere)
   }
   // read the JSON file and feed tracery with data
   function fromJsonToStory(genStory) {
@@ -55,7 +53,7 @@ const s = function (p) {
       var story = new Story(jsonInput.main.animal, jsonInput.main.umor)
       genStory = story.createStory()
       lettere = fromStringToChar(genStory, lettere)
-//      voceNarrante.speak(genStory)
+      voceNarrante.speak(genStory)
     })
   }
 // Transform one string to signle char for make the text animation
