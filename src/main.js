@@ -39,7 +39,7 @@ const s = function (p) {
     })
   }
   p.mousePressed = function () {
-    voceNarrante.speak("testo di prova")
+    voceNarrante.speak(introText)
     fromJsonToStory(introText)
   }
 
