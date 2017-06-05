@@ -18,11 +18,7 @@ module.exports = {
   context: path.resolve(__dirname, "src"),
   entry: __MAIN,
 
-  devtool: _DEV_
-    ? '#cheap-source-map'
-    : _STAGING_
-    ? '#source-map'
-    : undefined,
+  devtool: 'source-map',
 
   output: {
     path: path.resolve("./build"),
